@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+}
+
+group = 'ru.otus'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.springframework', name: 'spring-core', version: '6.0.7'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.7.1'
+    implementation group: 'org.springframework', name: 'spring-context', version: '6.0.7'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+
+}
+task copyAllDependencies(type: Copy) {
+    from(configurations.runtimeClasspath.files)
+    into("$buildDir/libs/lib")
+}
+
+jar {
+    def jars = configurations.runtimeClasspath.files.collect { "lib/$it.name" }
+    manifest {
+        attributes 'Main-Class': 'ru.otus.otusspringstudy.Main'
+        attributes 'Class-Path': jars.join(' ')
+    }
+}
+jar.dependsOn copyAllDependencies
