@@ -5,14 +5,17 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import ru.otus.otusspringstudy.domain.Question;
 
+@Slf4j
 public class QuestionDaoSimple implements QuestionDao {
     private final Resource fileResource;
 
@@ -22,16 +25,13 @@ public class QuestionDaoSimple implements QuestionDao {
     }
 
     @Override
-    public List<Question> readQuestions() throws IOException {
+    public List<Question> readQuestions() {
         List<Question> resultList = new ArrayList<>();
         CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
-        System.out.println("here's fileResource " + fileResource);
-        System.out.println("here's fileResource " + fileResource);
-        System.out.println("here's file " + fileResource.getFilename());
-        System.out.println("here's file " + fileResource.getFile());
+        log.info("here's fileResource " + fileResource);
         try (
-                FileReader filereader = new FileReader(fileResource.getFile());
-                CSVReader csvReader = new CSVReaderBuilder(filereader)
+                Reader reader = new InputStreamReader(fileResource.getInputStream());
+                CSVReader csvReader = new CSVReaderBuilder(reader)
                         .withCSVParser(parser)
                         .build();
         ) {

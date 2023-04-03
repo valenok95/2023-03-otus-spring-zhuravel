@@ -1,8 +1,10 @@
 package ru.otus.otusspringstudy.service;
 
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import ru.otus.otusspringstudy.dao.QuestionDao;
 
+@Slf4j
 public class TestServiceImpl implements TestService {
     private final QuestionDao questionDao;
 
@@ -13,11 +15,9 @@ public class TestServiceImpl implements TestService {
     @Override
     public void listQuestions() throws IOException {
         questionDao.readQuestions().forEach(question -> {
-            System.out.println(question.getText());
+            log.info("question text is " + question.getText());
             if (question.hasAns()) {
-                System.out.println(question.getAns());
-            } else {
-                System.out.println();
+                log.info("question ans is " + question.getAns());
             }
         });
     }
