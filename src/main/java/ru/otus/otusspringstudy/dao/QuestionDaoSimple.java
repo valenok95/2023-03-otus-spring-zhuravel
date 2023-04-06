@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import ru.otus.otusspringstudy.domain.Question;
+import ru.otus.otusspringstudy.exception.ReadResourceException;
 
 @Slf4j
 public class QuestionDaoSimple implements QuestionDao {
@@ -40,7 +41,7 @@ public class QuestionDaoSimple implements QuestionDao {
                 resultList.add(parseStringArrayToQuestion(s));
             });
         } catch (CsvException | IOException e) {
-            throw new RuntimeException(e);
+            throw new ReadResourceException(e.getMessage());
         }
         return resultList;
     }
