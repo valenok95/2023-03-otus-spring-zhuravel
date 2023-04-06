@@ -13,15 +13,17 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Repository;
 import ru.otus.otusspringstudy.domain.Question;
+import ru.otus.otusspringstudy.exception.ReadResourceException;
 
 @Slf4j
+@Repository
 public class QuestionDaoSimple implements QuestionDao {
     private final Resource fileResource;
 
     public QuestionDaoSimple(String filePath) {
         fileResource = new ClassPathResource(filePath);
-
     }
 
     @Override
@@ -40,7 +42,7 @@ public class QuestionDaoSimple implements QuestionDao {
                 resultList.add(parseStringArrayToQuestion(s));
             });
         } catch (CsvException | IOException e) {
-            throw new RuntimeException(e);
+            throw new ReadResourceException(e.getMessage());
         }
         return resultList;
     }
