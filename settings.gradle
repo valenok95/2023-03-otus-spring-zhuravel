@@ -1,0 +1,3 @@
+rootProject.name = '2023-03-otus-spring-zhuravel'
+include 'homework05'
+
