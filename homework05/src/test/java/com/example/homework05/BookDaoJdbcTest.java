@@ -47,7 +47,7 @@ public class BookDaoJdbcTest {
                 "roman"));
         bookDao.insert(expectedBook);
 
-        Book actualBook = bookDao.getById(expectedBook.getId());
+        Book actualBook = bookDao.getById(expectedBook.getId()).get();
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
@@ -56,7 +56,7 @@ public class BookDaoJdbcTest {
     void shouldReturnExpectedBookById() {
         Book expectedBook = new Book(EXISTING_BOOK_ID, EXISTING_BOOK_NAME, EXISTING_BOOK_AUTHOR
                 , EXISTING_BOOK_GENRE);
-        Book actualBook = bookDao.getById(expectedBook.getId());
+        Book actualBook = bookDao.getById(expectedBook.getId()).get();
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 

@@ -16,7 +16,7 @@ public class GenreService {
     }
 
     public Genre getGenreById(long id) {
-        return genreDao.getById(id);
+        return genreDao.getById(id).orElseThrow();
     }
 
     public List<Genre> getAll() {

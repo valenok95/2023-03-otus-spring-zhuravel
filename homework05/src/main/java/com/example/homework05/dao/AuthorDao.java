@@ -2,13 +2,14 @@ package com.example.homework05.dao;
 
 import com.example.homework05.domain.Author;
 import java.util.List;
+import java.util.Optional;
 
 public interface AuthorDao {
     int count();
 
-    void insert(Author author);
+    Author insert(Author author);
 
-    Author getById(long id);
+    Optional<Author> getById(long id);
 
     List<Author> getAll();
 

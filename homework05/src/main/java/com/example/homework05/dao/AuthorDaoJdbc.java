@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,29 +25,32 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void insert(Author author) {
-        jdbc.update("insert into AUTHORS (id,name) values (:id,:name)"
+    public Author insert(Author author) {
+        jdbc.update("insert into AUTHORS (AUTHOR_ID,name) values (:AUTHOR_ID,:name)"
                 , Map.of(
-                        "id",
+                        "AUTHOR_ID",
                         author.getId(), "name", author.getName()));
-    }
-
-    @Override
-    public Author getById(long id) {
-        return jdbc.queryForObject("select id, name from AUTHORS where id =:id",
-                Map.of("id", id),
+        return jdbc.queryForObject("select AUTHOR_ID, name from AUTHORS where AUTHOR_ID =:AUTHOR_ID",
+                Map.of("AUTHOR_ID", author.getId()),
                 new AuthorMapper());
     }
 
     @Override
+    public Optional<Author> getById(long id) {
+        return Optional.of(jdbc.queryForObject("select AUTHOR_ID, name from AUTHORS where AUTHOR_ID =:AUTHOR_ID",
+                Map.of("AUTHOR_ID", id),
+                new AuthorMapper()));
+    }
+
+    @Override
     public List<Author> getAll() {
-        return jdbc.query("select id, name from AUTHORS",
+        return jdbc.query("select AUTHOR_ID, name from AUTHORS",
                 new AuthorMapper());
     }
 
     @Override
     public void deleteById(long id) {
-        jdbc.update("delete from AUTHORS where id= :id", Map.of("id", id));
+        jdbc.update("delete from AUTHORS where AUTHOR_ID= :AUTHOR_ID", Map.of("AUTHOR_ID", id));
     }
 
     private static class AuthorMapper implements RowMapper<Author> {

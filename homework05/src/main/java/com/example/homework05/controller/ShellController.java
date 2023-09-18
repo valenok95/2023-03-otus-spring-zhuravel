@@ -1,11 +1,8 @@
 package com.example.homework05.controller;
 
-import com.example.homework05.domain.Author;
-import com.example.homework05.domain.Book;
-import com.example.homework05.domain.Genre;
-import com.example.homework05.service.AuthorService;
+import com.example.homework05.dto.BookDto;
+import com.example.homework05.dto.BookResponseDto;
 import com.example.homework05.service.BookService;
-import com.example.homework05.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -15,8 +12,6 @@ import org.springframework.shell.standard.ShellOption;
 @RequiredArgsConstructor
 public class ShellController {
     private final BookService bookService;
-    private final AuthorService authorService;
-    private final GenreService genreService;
 
     @ShellMethod(value = "Create book command", key = {"cb", "createbook"})
     public String createBook(
@@ -24,10 +19,7 @@ public class ShellController {
             @ShellOption(defaultValue = "Some book") String name,
             @ShellOption(defaultValue = "1") long authorId,
             @ShellOption(defaultValue = "1") long genreId) {
-        Author author = authorService.getAuthorById(authorId);
-        Genre genre = genreService.getGenreById(genreId);
-        Book newBook = new Book(id, name,
-                author, genre);
+        BookDto newBook = new BookDto(id, name, authorId, genreId);
         bookService.saveBook(newBook);
         return String.format("Сохранена книга: %s с id %d", newBook.getName(), newBook.getId());
     }
@@ -35,9 +27,9 @@ public class ShellController {
     @ShellMethod(value = "Get book command", key = {"gb", "getbook"})
     public String getBook(
             @ShellOption(defaultValue = "1") long id) {
-        Book book = bookService.getBookById(id);
-        return String.format("Получена книга: %s , Автор: %s ; Жанр: %s ", book.getName(),
-                book.getAuthor().getName(), book.getGenre().getName());
+        BookResponseDto response = bookService.getBookById(id);
+        return String.format("Получена книга: %s , Автор: %s ; Жанр: %s ", response.getName(),
+                response.getName(), response.getName());
     }
 
     @ShellMethod(value = "Update book command", key = {"ub", "updatebook"})
@@ -46,10 +38,7 @@ public class ShellController {
             @ShellOption(defaultValue = "Some book") String name,
             @ShellOption(defaultValue = "1") long authorId,
             @ShellOption(defaultValue = "1") long genreId) {
-        Author author = authorService.getAuthorById(authorId);
-        Genre genre = genreService.getGenreById(genreId);
-        Book newBook = new Book(id, name,
-                author, genre);
+        BookDto newBook = new BookDto(id, name, authorId, genreId);
         bookService.saveBook(newBook);
         return String.format("Обновлена книга: %s с id %d", newBook.getName(), newBook.getId());
     }
@@ -58,9 +47,9 @@ public class ShellController {
     @ShellMethod(value = "Get book command", key = {"db", "deletebook"})
     public String deleteBook(
             @ShellOption(defaultValue = "1") long id) {
-        Book book = bookService.getBookById(id);
+        BookResponseDto deletedBook = bookService.getBookById(id);
         bookService.deleteById(id);
-        return String.format("Удалена книга: %s , Автор: %s ; Жанр: %s ", book.getName(),
-                book.getAuthor().getName(), book.getGenre().getName());
+        return String.format("Удалена книга: %s , Автор: %s ; Жанр: %s ", deletedBook.getName(),
+                deletedBook.getName(), deletedBook.getName());
     }
 }

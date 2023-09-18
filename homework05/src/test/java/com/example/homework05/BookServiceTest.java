@@ -5,8 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.homework05.domain.Author;
-import com.example.homework05.domain.Book;
 import com.example.homework05.domain.Genre;
+import com.example.homework05.dto.BookDto;
+import com.example.homework05.dto.BookResponseDto;
 import com.example.homework05.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,35 +16,40 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 @SpringBootTest
 public class BookServiceTest {
-    private static final int EXISTING_BOOK_ID_FOR_GET_TEST = 1;
-    private static final int EXISTING_BOOK_ID_FOR_SAVE_DELETE_TEST = 999;
+    private static final Long EXISTING_BOOK_ID_FOR_GET_TEST = 1L;
+    private static final Long EXISTING_BOOK_ID_FOR_SAVE_DELETE_TEST = 999L;
     private static final String EXISTING_BOOK_NAME = "Voyna i Mir";
-    private static final Author EXISTING_BOOK_AUTHOR = new Author(1, "Lev Tolstoy");
-    private static final Genre EXISTING_BOOK_GENRE = new Genre(1, "roman");
-    private static final Book EXPECTED_BOOK = new Book(EXISTING_BOOK_ID_FOR_GET_TEST, EXISTING_BOOK_NAME,
-            EXISTING_BOOK_AUTHOR, EXISTING_BOOK_GENRE);
+    private static final Long EXISTING_BOOK_AUTHOR_ID = 1L;
+    private static final Long EXISTING_BOOK_GENRE_ID = 1L;
+    private static final String EXISTING_BOOK_AUTHOR_NAME = "Lev Tolstoy";
+    private static final String EXISTING_BOOK_GENRE_NAME = "roman";
+    private static final BookResponseDto EXPECTED_BOOK_RESPONSE_DTO = new BookResponseDto(EXISTING_BOOK_ID_FOR_GET_TEST,
+            EXISTING_BOOK_NAME,
+            EXISTING_BOOK_AUTHOR_NAME, EXISTING_BOOK_GENRE_NAME);
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     @Test
     void getBookTest() {
-        Book actualBook = bookService.getBookById(EXISTING_BOOK_ID_FOR_GET_TEST);
-        assertThat(actualBook).isEqualTo(EXPECTED_BOOK);
+        BookResponseDto actualBook = bookService.getBookById(EXISTING_BOOK_ID_FOR_GET_TEST);
+        assertThat(actualBook).isEqualTo(EXPECTED_BOOK_RESPONSE_DTO);
     }
 
     @Test
     void saveBookTest() {
-        Book expectedBook = new Book(999, "Test book",
-                EXISTING_BOOK_AUTHOR, EXISTING_BOOK_GENRE);
-        bookService.saveBook(expectedBook);
-        Book actualBook = bookService.getBookById(999);
+        BookDto saveBook = new BookDto(999L, "Test book",
+                EXISTING_BOOK_AUTHOR_ID, EXISTING_BOOK_GENRE_ID);
+        BookResponseDto expectedBook = new BookResponseDto(999L, "Test book",
+                EXISTING_BOOK_AUTHOR_NAME, EXISTING_BOOK_GENRE_NAME);
+        bookService.saveBook(saveBook);
+        BookResponseDto actualBook = bookService.getBookById(999);
         assertThat(actualBook).isEqualTo(expectedBook);
     }
 
     @Test
     void deleteBookTest() {
-        Book expectedBook = new Book(EXISTING_BOOK_ID_FOR_SAVE_DELETE_TEST, "Test book",
-                EXISTING_BOOK_AUTHOR, EXISTING_BOOK_GENRE);
+        BookDto expectedBook = new BookDto(EXISTING_BOOK_ID_FOR_SAVE_DELETE_TEST, "Test book",
+                EXISTING_BOOK_AUTHOR_ID, EXISTING_BOOK_GENRE_ID);
         bookService.saveBook(expectedBook);
 
         assertThatCode(() -> bookService.getBookById(EXISTING_BOOK_ID_FOR_SAVE_DELETE_TEST))
@@ -53,7 +59,5 @@ public class BookServiceTest {
 
         assertThatThrownBy(() -> bookService.getBookById(EXISTING_BOOK_ID_FOR_SAVE_DELETE_TEST))
                 .isInstanceOf(EmptyResultDataAccessException.class);
-        
-
     }
 }

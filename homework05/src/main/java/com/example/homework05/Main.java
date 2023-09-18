@@ -14,4 +14,3 @@ public class Main {
         Console.main(args);
     }
 }
-//осталось написать bookService и погуглить Spring shell, чтобы дергать сервис

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -26,36 +27,43 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public void insert(Book book) {
-        jdbc.update("insert into BOOKS (id,name,authorID,genreID) values (:id,:name,:authorID,:genreID)"
+    public Book insert(Book book) {
+        jdbc.update("insert into BOOKS (BOOK_ID,name,AUTHOR_ID,GENRE_ID) values (:BOOK_ID,:name," +
+                        ":AUTHOR_ID,:GENRE_ID)"
                 , Map.of(
-                        "id",
-                        book.getId(), "name", book.getName(), "authorID", book.getAuthor().getId(),
-                        "genreID",
+                        "BOOK_ID",
+                        book.getId(), "name", book.getName(), "AUTHOR_ID", book.getAuthor().getId(),
+                        "GENRE_ID",
                         book.getGenre().getId()));
-    }
-
-    @Override
-    public Book getById(long id) {
-        return jdbc.queryForObject("select b.id, b.name, a.ID, a.name,g.ID, g.name from BOOKS b" +
-                        "                LEFT JOIN AUTHORS a ON b.authorID = a.ID" +
-                        "                LEFT JOIN GENRES g ON b.genreID = g.ID" +
-                        "                where b.id =:id;",
-                Map.of("id", id),
+        return jdbc.queryForObject("select b.BOOK_ID, b.name, a.AUTHOR_ID, a.name,g.GENRE_ID, g.name from BOOKS b" +
+                        "                LEFT JOIN AUTHORS a ON b.AUTHOR_ID = a.AUTHOR_ID" +
+                        "                LEFT JOIN GENRES g ON b.GENRE_ID = g.GENRE_ID" +
+                        "                where b.BOOK_ID =:BOOK_ID;",
+                Map.of("BOOK_ID", book.getId()),
                 new BookMapper());
     }
 
     @Override
+    public Optional<Book> getById(long id) {
+        return Optional.of(jdbc.queryForObject("select b.BOOK_ID, b.name, a.AUTHOR_ID, a.name,g.GENRE_ID, g.name from BOOKS b" +
+                        "                LEFT JOIN AUTHORS a ON b.AUTHOR_ID = a.AUTHOR_ID" +
+                        "                LEFT JOIN GENRES g ON b.GENRE_ID = g.GENRE_ID" +
+                        "                where b.BOOK_ID =:BOOK_ID;",
+                Map.of("BOOK_ID", id),
+                new BookMapper()));
+    }
+
+    @Override
     public List<Book> getAll() {
-        return jdbc.query("select b.id, b.name, a.ID, a.name,g.ID, g.name from BOOKS b" +
-                        "                LEFT JOIN AUTHORS a ON b.authorID = a.ID" +
-                        "                LEFT JOIN GENRES g ON b.genreID = g.ID",
+        return jdbc.query("select b.BOOK_ID, b.name, a.AUTHOR_ID, a.name,g.GENRE_ID, g.name from BOOKS b" +
+                        "                LEFT JOIN AUTHORS a ON b.AUTHOR_ID = a.AUTHOR_ID" +
+                        "                LEFT JOIN GENRES g ON b.GENRE_ID = g.GENRE_ID",
                 new BookMapper());
     }
 
     @Override
     public void deleteById(long id) {
-        jdbc.update("delete from BOOKS where id= :id", Map.of("id", id));
+        jdbc.update("delete from BOOKS where BOOK_ID= :BOOK_ID", Map.of("BOOK_ID", id));
     }
 
     private static class BookMapper implements RowMapper<Book> {

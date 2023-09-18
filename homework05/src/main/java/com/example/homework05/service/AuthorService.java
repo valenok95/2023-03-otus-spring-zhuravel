@@ -16,7 +16,7 @@ public class AuthorService {
     }
 
     public Author getAuthorById(long id) {
-        return authorDao.getById(id);
+        return authorDao.getById(id).orElseThrow();
     }
 
     public List<Author> getAll() {

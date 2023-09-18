@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,29 +25,32 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public void insert(Genre author) {
-        jdbc.update("insert into GENRES (id,name) values (:id,:name)"
+    public Genre insert(Genre genre) {
+        jdbc.update("insert into GENRES (GENRE_ID,name) values (:GENRE_ID,:name)"
                 , Map.of(
-                        "id",
-                        author.getId(), "name", author.getName()));
-    }
-
-    @Override
-    public Genre getById(long id) {
-        return jdbc.queryForObject("select id, name from GENRES where id =:id",
-                Map.of("id", id),
+                        "GENRE_ID",
+                        genre.getId(), "name", genre.getName()));
+        return jdbc.queryForObject("select GENRE_ID, name from GENRES where GENRE_ID =:GENRE_ID",
+                Map.of("GENRE_ID", genre.getId()),
                 new GenreDaoJdbc.GenreMapper());
     }
 
     @Override
+    public Optional<Genre> getById(long id) {
+        return Optional.of(jdbc.queryForObject("select GENRE_ID, name from GENRES where GENRE_ID =:GENRE_ID",
+                Map.of("GENRE_ID", id),
+                new GenreDaoJdbc.GenreMapper()));
+    }
+
+    @Override
     public List<Genre> getAll() {
-        return jdbc.query("select id, name from GENRES",
+        return jdbc.query("select GENRE_ID, name from GENRES",
                 new GenreDaoJdbc.GenreMapper());
     }
 
     @Override
     public void deleteById(long id) {
-        jdbc.update("delete from GENRES where id= :id", Map.of("id", id));
+        jdbc.update("delete from GENRES where GENRE_ID= :GENRE_ID", Map.of("GENRE_ID", id));
     }
 
     private static class GenreMapper implements RowMapper<Genre> {

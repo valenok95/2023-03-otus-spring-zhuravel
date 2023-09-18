@@ -1,7 +1,11 @@
 package com.example.homework05.service;
 
 import com.example.homework05.dao.BookDao;
+import com.example.homework05.domain.Author;
 import com.example.homework05.domain.Book;
+import com.example.homework05.domain.Genre;
+import com.example.homework05.dto.BookDto;
+import com.example.homework05.dto.BookResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,16 +13,25 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookService {
     private final BookDao bookDao;
+    private final AuthorService authorService;
+    private final GenreService genreService;
 
-    public void saveBook(Book book) {
+    public void saveBook(BookDto newBook) {
+        Author author = authorService.getAuthorById(newBook.getAuthorId());
+        Genre genre = genreService.getGenreById(newBook.getGenreId());
+        Book book = new Book(newBook.getId(), newBook.getName(),
+                author, genre);
         bookDao.insert(book);
     }
 
-    public Book getBookById(long id) {
-        return bookDao.getById(id);
+    public BookResponseDto getBookById(long id) {
+        Book resultBook = bookDao.getById(id).orElseThrow();
+
+        return new BookResponseDto(resultBook.getId(), resultBook.getName(),
+                resultBook.getAuthor().getName(), resultBook.getGenre().getName());
     }
 
     public void deleteById(long id) {
-         bookDao.deleteById(id);
+        bookDao.deleteById(id);
     }
 }
