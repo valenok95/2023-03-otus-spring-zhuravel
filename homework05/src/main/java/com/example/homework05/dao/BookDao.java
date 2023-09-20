@@ -9,6 +9,8 @@ public interface BookDao {
 
     Book insert(Book book);
 
+    Book update(Book book);
+
     Optional<Book> getById(long id);
 
     List<Book> getAll();

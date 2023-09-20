@@ -44,6 +44,24 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
+    public Book update(Book book) {
+        jdbc.update("UPDATE BOOKS SET name =:name, AUTHOR_ID=:AUTHOR_ID," +
+                        "GENRE_ID=:GENRE_ID WHERE BOOK_ID=:BOOK_ID"
+                , Map.of(
+                        "BOOK_ID",
+                        book.getId(), "name", book.getName(), "AUTHOR_ID", book.getAuthor().getId(),
+                        "GENRE_ID",
+                        book.getGenre().getId()));
+        return jdbc.queryForObject("select b.BOOK_ID, b.name, a.AUTHOR_ID, a.name,g.GENRE_ID, g.name from BOOKS b" +
+                        "                LEFT JOIN AUTHORS a ON b.AUTHOR_ID = a.AUTHOR_ID" +
+                        "                LEFT JOIN GENRES g ON b.GENRE_ID = g.GENRE_ID" +
+                        "                where b.BOOK_ID =:BOOK_ID;",
+                Map.of("BOOK_ID", book.getId()),
+                new BookMapper());
+
+    }
+
+    @Override
     public Optional<Book> getById(long id) {
         return Optional.of(jdbc.queryForObject("select b.BOOK_ID, b.name, a.AUTHOR_ID, a.name,g.GENRE_ID, g.name from BOOKS b" +
                         "                LEFT JOIN AUTHORS a ON b.AUTHOR_ID = a.AUTHOR_ID" +

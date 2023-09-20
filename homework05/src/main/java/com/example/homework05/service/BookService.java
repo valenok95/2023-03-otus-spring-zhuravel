@@ -24,6 +24,14 @@ public class BookService {
         bookDao.insert(book);
     }
 
+    public void updateBook(BookDto updateBook) {
+        Author author = authorService.getAuthorById(updateBook.getAuthorId());
+        Genre genre = genreService.getGenreById(updateBook.getGenreId());
+        Book book = new Book(updateBook.getId(), updateBook.getName(),
+                author, genre);
+        bookDao.update(book);
+    }
+
     public BookResponseDto getBookById(long id) {
         Book resultBook = bookDao.getById(id).orElseThrow();
 
