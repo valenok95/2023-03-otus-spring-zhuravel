@@ -1,6 +1,8 @@
 package com.example.homework05.service;
 
+import com.example.homework05.dao.AuthorDao;
 import com.example.homework05.dao.BookDao;
+import com.example.homework05.dao.GenreDao;
 import com.example.homework05.domain.Author;
 import com.example.homework05.domain.Book;
 import com.example.homework05.domain.Genre;
@@ -13,20 +15,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookService {
     private final BookDao bookDao;
-    private final AuthorService authorService;
-    private final GenreService genreService;
+    private final AuthorDao authorDao;
+    private final GenreDao genreDao;
 
     public void saveBook(BookDto newBook) {
-        Author author = authorService.getAuthorById(newBook.getAuthorId());
-        Genre genre = genreService.getGenreById(newBook.getGenreId());
+        Author author = authorDao.getById(newBook.getAuthorId()).orElseThrow();
+        Genre genre = genreDao.getById(newBook.getGenreId()).orElseThrow();
         Book book = new Book(newBook.getId(), newBook.getName(),
                 author, genre);
         bookDao.insert(book);
     }
 
     public void updateBook(BookDto updateBook) {
-        Author author = authorService.getAuthorById(updateBook.getAuthorId());
-        Genre genre = genreService.getGenreById(updateBook.getGenreId());
+        Author author = authorDao.getById(updateBook.getAuthorId()).orElseThrow();
+        Genre genre = genreDao.getById(updateBook.getGenreId()).orElseThrow();
         Book book = new Book(updateBook.getId(), updateBook.getName(),
                 author, genre);
         bookDao.update(book);
