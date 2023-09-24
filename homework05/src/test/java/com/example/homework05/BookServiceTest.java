@@ -36,41 +36,43 @@ public class BookServiceTest {
 
     @Test
     void saveBookTest() {
-        BookDto saveBook = new BookDto(EXISTING_BOOK_ID_FOR_SAVE_TEST, "Test book",
+        BookDto saveBook = new BookDto(null, "Test book",
                 EXISTING_BOOK_AUTHOR_ID, EXISTING_BOOK_GENRE_ID);
-        BookResponseDto expectedBook = new BookResponseDto(EXISTING_BOOK_ID_FOR_SAVE_TEST, "Test book",
+        BookResponseDto expectedBook = new BookResponseDto(null, "Test book",
                 EXISTING_BOOK_AUTHOR_NAME, EXISTING_BOOK_GENRE_NAME);
         bookService.saveBook(saveBook);
-        BookResponseDto actualBook = bookService.getBookById(EXISTING_BOOK_ID_FOR_SAVE_TEST);
-        assertThat(actualBook).isEqualTo(expectedBook);
+        BookResponseDto actualBook = bookService.getBookById(bookService.getBookCount());
+        assertThat(actualBook).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedBook);
     }
 
     @Test
     void updateBookTest() {
-        BookDto saveBook = new BookDto(999L, "Test book",
+        BookDto saveBook = new BookDto(null, "Test book",
                 EXISTING_BOOK_AUTHOR_ID, EXISTING_BOOK_GENRE_ID);
-        BookDto updateBook = new BookDto(999L, "Test book 2",
+        Long newId = bookService.getBookCount()+1;
+        BookDto updateBook = new BookDto(newId, "Test book 2",
                 EXISTING_BOOK_AUTHOR_ID, EXISTING_BOOK_GENRE_ID);
-        BookResponseDto expectedBook = new BookResponseDto(999L, "Test book 2",
+        BookResponseDto expectedBook = new BookResponseDto(newId, "Test book 2",
                 EXISTING_BOOK_AUTHOR_NAME, EXISTING_BOOK_GENRE_NAME);
         bookService.saveBook(saveBook);
         bookService.updateBook(updateBook);
-        BookResponseDto actualBook = bookService.getBookById(999);
+        BookResponseDto actualBook = bookService.getBookById(newId);
         assertThat(actualBook).isEqualTo(expectedBook);
     }
 
     @Test
     void deleteBookTest() {
-        BookDto expectedBook = new BookDto(EXISTING_BOOK_ID_FOR_DELETE_TEST, "Test book",
+        BookDto expectedBook = new BookDto(null, "Test book",
                 EXISTING_BOOK_AUTHOR_ID, EXISTING_BOOK_GENRE_ID);
         bookService.saveBook(expectedBook);
+        Long newId = bookService.getBookCount();
 
-        assertThatCode(() -> bookService.getBookById(EXISTING_BOOK_ID_FOR_DELETE_TEST))
+        assertThatCode(() -> bookService.getBookById(newId))
                 .doesNotThrowAnyException();
 
-        bookService.deleteById(EXISTING_BOOK_ID_FOR_DELETE_TEST);
+        bookService.deleteById(newId);
 
-        assertThatThrownBy(() -> bookService.getBookById(EXISTING_BOOK_ID_FOR_DELETE_TEST))
+        assertThatThrownBy(() -> bookService.getBookById(newId))
                 .isInstanceOf(EmptyResultDataAccessException.class);
     }
 }

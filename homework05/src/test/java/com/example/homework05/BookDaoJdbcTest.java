@@ -22,9 +22,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 public class BookDaoJdbcTest {
 
     private static final int EXPECTED_BOOKS_COUNT = 2;
-    private static final int EXISTING_BOOK_ID = 1;
+    private static final Long EXISTING_BOOK_ID = 1L;
     private static final String EXISTING_BOOK_NAME = "Voyna i Mir";
-    private static final Author EXISTING_BOOK_AUTHOR = new Author(1,"Lev Tolstoy");
+    private static final Author EXISTING_BOOK_AUTHOR = new Author(1, "Lev Tolstoy");
     private static final Genre EXISTING_BOOK_GENRE = new Genre(1, "roman");
 
     @Autowired
@@ -43,24 +43,28 @@ public class BookDaoJdbcTest {
         int countBeforeInsert = bookDao.count();
         assertThat(countBeforeInsert).isEqualTo(EXPECTED_BOOKS_COUNT);
 
-        Book expectedBook = new Book(3, "Kapitanskaya dochka", new Author(2,"Pushkin"), new Genre(1,
-                "roman"));
+        Book expectedBook = new Book(null, "Kapitanskaya dochka", new Author(2, "Pushkin"),
+                new Genre(1,
+                        "roman"));
         bookDao.insert(expectedBook);
+        int newId = bookDao.count();
 
-        Book actualBook = bookDao.getById(expectedBook.getId()).get();
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        Book actualBook = bookDao.getById(newId).get();
+        assertThat(actualBook).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedBook);
     }
+
     @DisplayName("добавлять книгу в БД")
     @Test
     void shouldUpdateBook() {
         int countBeforeInsert = bookDao.count();
         assertThat(countBeforeInsert).isEqualTo(EXPECTED_BOOKS_COUNT);
 
-        Book expectedBook = new Book(3, "Kapitanskaya dochka", new Author(2,"Pushkin"), new Genre(1,
-                "roman"));
-        Book updatedBook = new Book(3, "Kapitanskaya dochka 2", new Author(2,"Pushkin"),
+        Book expectedBook = new Book(3L, "Kapitanskaya dochka", new Author(2, "Pushkin"),
                 new Genre(1,
-                "roman"));
+                        "roman"));
+        Book updatedBook = new Book(3L, "Kapitanskaya dochka 2", new Author(2, "Pushkin"),
+                new Genre(1,
+                        "roman"));
         bookDao.insert(expectedBook);
         bookDao.update(updatedBook);
 

@@ -28,18 +28,20 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public Book insert(Book book) {
+        int newId = count()+1;
+        
         jdbc.update("insert into BOOKS (BOOK_ID,name,AUTHOR_ID,GENRE_ID) values (:BOOK_ID,:name," +
                         ":AUTHOR_ID,:GENRE_ID)"
                 , Map.of(
                         "BOOK_ID",
-                        book.getId(), "name", book.getName(), "AUTHOR_ID", book.getAuthor().getId(),
+                        newId, "name", book.getName(), "AUTHOR_ID", book.getAuthor().getId(),
                         "GENRE_ID",
                         book.getGenre().getId()));
         return jdbc.queryForObject("select b.BOOK_ID, b.name, a.AUTHOR_ID, a.name,g.GENRE_ID, g.name from BOOKS b" +
                         "                LEFT JOIN AUTHORS a ON b.AUTHOR_ID = a.AUTHOR_ID" +
                         "                LEFT JOIN GENRES g ON b.GENRE_ID = g.GENRE_ID" +
                         "                where b.BOOK_ID =:BOOK_ID;",
-                Map.of("BOOK_ID", book.getId()),
+                Map.of("BOOK_ID", newId),
                 new BookMapper());
     }
 
@@ -87,7 +89,7 @@ public class BookDaoJdbc implements BookDao {
     private static class BookMapper implements RowMapper<Book> {
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Book(rs.getInt(1), rs.getString(2), new Author(rs.getInt(3),
+            return new Book(rs.getLong(1), rs.getString(2), new Author(rs.getInt(3),
                     rs.getString(4)),
                     new Genre(rs.getInt(5), rs.getString(6)));
         }

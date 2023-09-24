@@ -15,11 +15,10 @@ public class ShellController {
 
     @ShellMethod(value = "Create book command", key = {"cb", "createbook"})
     public String createBook(
-            @ShellOption(defaultValue = "999") long id,
             @ShellOption(defaultValue = "Some book") String name,
             @ShellOption(defaultValue = "1") long authorId,
             @ShellOption(defaultValue = "1") long genreId) {
-        BookDto newBook = new BookDto(id, name, authorId, genreId);
+        BookDto newBook = new BookDto(null, name, authorId, genreId);
         bookService.saveBook(newBook);
         return String.format("Сохранена книга: %s с id %d", newBook.getName(), newBook.getId());
     }
