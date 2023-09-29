@@ -25,7 +25,7 @@ public class IOServiceStream implements IOService {
 
     @Override
     public String readString() {
-        return in.next();
+        return in.nextLine();
     }
 
     @Override

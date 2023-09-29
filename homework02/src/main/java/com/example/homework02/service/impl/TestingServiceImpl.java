@@ -13,16 +13,12 @@ import org.springframework.stereotype.Service;
 public class TestingServiceImpl implements TestingService {
 
     private int successCount;
-
     private final int needSuccessCount;
-
     private final QuestionDao questionDao;
-
     private final IOService ioService;
 
     @Autowired
-    public TestingServiceImpl(@Value("${questions.needCountOfQuestionForSuccess}") int needSuccessCount,
-                              QuestionDao questionDao,
+    public TestingServiceImpl(@Value("${questions.needCountOfQuestionForSuccess}") int needSuccessCount, QuestionDao questionDao,
                               IOService ioService) {
         this.needSuccessCount = needSuccessCount;
         this.questionDao = questionDao;
@@ -33,14 +29,18 @@ public class TestingServiceImpl implements TestingService {
     public void testing() {
         List<Question> questionList = questionDao.getAll();
         successCount = 0;
-
-        greeting(questionList);
+        String fullName = askAndGetFullName();
+        greeting(questionList, fullName);
         testingQuestions(questionList);
-        printResult(questionList);
+        printResult(questionList, fullName);
     }
 
-    private void greeting(List<Question> questionList) {
-        ioService.printString("Welcome to TEST!");
+    private String askAndGetFullName() {
+        return ioService.readStringWithPrompt("Please, enter your full name: ");
+    }
+
+    private void greeting(List<Question> questionList, String fullName) {
+        ioService.printString(fullName + " , welcome to test!");
         ioService.printString("There's " + questionList.size() + " questions for you");
         ioService.printString("You need do do at least " + needSuccessCount + " right answers");
     }
@@ -66,8 +66,8 @@ public class TestingServiceImpl implements TestingService {
         return verdict;
     }
 
-    private void printResult(List<Question> questionList) {
-        ioService.printString("Result");
+    private void printResult(List<Question> questionList, String fullName) {
+        ioService.printString("Result for " + fullName);
         ioService.printString("you've answered at " + successCount + "/" + questionList.size() +
                 " questions.");
         ioService.printString("minimum: " + needSuccessCount + " questions");
