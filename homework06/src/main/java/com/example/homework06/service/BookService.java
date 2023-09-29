@@ -9,10 +9,9 @@ import com.example.homework06.model.Genre;
 import com.example.homework06.repository.AuthorRepository;
 import com.example.homework06.repository.BookRepository;
 import com.example.homework06.repository.GenreRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,17 +39,16 @@ public class BookService {
         Genre genre =
                 genreRepository.getById(updateBook.getGenreId()).orElseThrow(() -> new NotFoundException("Жанр не " +
                         "обнаружен!"));
-        Book book = 
+        Book book =
                 bookRepository.getById(updateBook.getId()).orElseThrow(() -> new NotFoundException("Книга не " +
-                "обнаружена!"));
+                        "обнаружена!"));
         book.setName(updateBook.getName());
         book.setAuthor(author);
         book.setGenre(genre);
         bookRepository.update(book);
     }
 
-    @Transactional
-    @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public BookResponseDto getBookById(long id) {
         Book resultBook = bookRepository.getById(id).orElseThrow(() -> new NotFoundException("Книга не " +
                 "обнаружена!"));
