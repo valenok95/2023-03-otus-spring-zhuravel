@@ -11,6 +11,7 @@ import com.example.homework06.repository.BookRepository;
 import com.example.homework06.repository.GenreRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,14 +40,17 @@ public class BookService {
         Genre genre =
                 genreRepository.getById(updateBook.getGenreId()).orElseThrow(() -> new NotFoundException("Жанр не " +
                         "обнаружен!"));
-        bookRepository.getById(updateBook.getId()).orElseThrow(() -> new NotFoundException("Книга не " +
+        Book book = 
+                bookRepository.getById(updateBook.getId()).orElseThrow(() -> new NotFoundException("Книга не " +
                 "обнаружена!"));
-        Book book = new Book(updateBook.getId(), updateBook.getName(),
-                author, genre);
+        book.setName(updateBook.getName());
+        book.setAuthor(author);
+        book.setGenre(genre);
         bookRepository.update(book);
     }
 
     @Transactional
+    @ReadOnlyProperty
     public BookResponseDto getBookById(long id) {
         Book resultBook = bookRepository.getById(id).orElseThrow(() -> new NotFoundException("Книга не " +
                 "обнаружена!"));

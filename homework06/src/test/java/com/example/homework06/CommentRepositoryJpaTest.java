@@ -25,7 +25,7 @@ public class CommentRepositoryJpaTest {
 
     private static final String EXISTING_COMMENT_TEXT = "I liked it";
     private static final Long EXISTING_BOOK_ID = 2L;
-    private static final Book EXISTING_BOOK_2 = new Book(2, "Eugene Onegin", new Author(2,
+    private static final Book EXISTING_BOOK_2 = new Book(2L, "Eugene Onegin", new Author(2,
             "Pushkin"), new Genre(1, "roman"));
     private static final Comment EXISTING_COMMENT_1 = new Comment(1, "I liked it", EXISTING_BOOK_2);
     private static final Comment EXISTING_COMMENT_2 = new Comment(2, "Long long story", EXISTING_BOOK_2);

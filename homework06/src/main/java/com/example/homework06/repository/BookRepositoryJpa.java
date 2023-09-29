@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,7 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Book insert(Book book) {
-        if (book.getId() <= 0) {
+        if (Objects.nonNull(book.getId())) {
             em.persist(book);
             return book;
         } else {

@@ -11,11 +11,13 @@ import com.example.homework06.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 @SpringBootTest
 public class BookServiceTest {
     private static final Long EXISTING_BOOK_ID_FOR_GET_TEST = 1L;
+    private static final Long EXISTING_BOOK_ID_WITH_COMMENTS = 2L;
     private static final String EXISTING_BOOK_NAME = "Voyna i Mir";
     private static final Long EXISTING_BOOK_AUTHOR_ID = 1L;
     private static final Long EXISTING_BOOK_GENRE_ID = 1L;
@@ -57,6 +59,14 @@ public class BookServiceTest {
 
         assertThatThrownBy(() -> bookService.getBookById(newId))
                 .isInstanceOf(NotFoundException.class);
+    }
+    @Test
+    void deleteBookWithCommentsTest() {
+        assertThatCode(() -> bookService.getBookById(EXISTING_BOOK_ID_WITH_COMMENTS))
+                .doesNotThrowAnyException();
+
+        assertThatThrownBy(() -> bookService.deleteById(EXISTING_BOOK_ID_WITH_COMMENTS))
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test

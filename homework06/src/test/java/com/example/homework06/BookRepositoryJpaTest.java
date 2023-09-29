@@ -45,7 +45,7 @@ public class BookRepositoryJpaTest {
         int countBeforeInsert = bookRepositoryJpa.getAll().size();
         assertThat(countBeforeInsert).isEqualTo(EXPECTED_BOOKS_COUNT);
 
-        Book expectedBook = new Book(0, "Kapitanskaya dochka", new Author(2, "Pushkin"),
+        Book expectedBook = new Book(null, "Kapitanskaya dochka", new Author(2, "Pushkin"),
                 new Genre(1,
                         "roman"));
         Book savedBook = bookRepositoryJpa.insert(expectedBook);
