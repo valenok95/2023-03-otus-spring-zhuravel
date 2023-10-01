@@ -1,0 +1,6 @@
+id,title,question,answer,option1,option2,option3
+1,Addition,How much will 2+2?,4,1,4,7
+2,Subtraction,How much will 9-4?,5,1,2,4,5
+3,Multiplication,How much will 2*3?,6,3,1,6
+4,Division,How much will 9/3?,3,1,2,3,4,5
+5,Degree,How much will 2^3?,8,2,8,4
