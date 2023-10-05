@@ -1,0 +1,7 @@
+message,ask.firstname,ask.lastname,welcome,question.asking.size,question.asking.required,question.asking.title,question.asking.answer.options,question.asking.answer.enter,result.named,result.count,result.min,result.success,result.failed
+id,title,question,answer,option1,option2,option3
+question,1,question.title.addition,question.text,2+2?,4,1,4,7
+question,2,question.title.subtraction,question.text,9-4?,5,1,2,4,5
+question,3,question.title.multiplication,question.text,2*3?,6,3,1,6
+question,4,question.title.division,question.text,9/3?,3,1,2,3,4,5
+question,5,question.title.degree,question.text,2^3?,8,2,8,4
