@@ -6,27 +6,30 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.core.io.Resource;
 
 @ConfigurationProperties(prefix = "app")
-public class TestServiceProperties {
-    private final Resource messageSource;
+public class TestServiceProperties implements LocaleProvider, ResourceProvider {
+    private final Resource resource;
     private final Locale locale;
     private final int needCountOfQuestionForSuccess;
 
     @ConstructorBinding
-    public TestServiceProperties(Locale locale, int needCountOfQuestionForSuccess, Resource messageSource) {
-        this.messageSource = messageSource;
+    public TestServiceProperties(Locale locale, int needCountOfQuestionForSuccess, Resource resource) {
+        this.resource = resource;
         this.needCountOfQuestionForSuccess = needCountOfQuestionForSuccess;
         this.locale = locale;
     }
 
-    public Resource getMessageSource() {
-        return messageSource;
-    }
 
+    @Override
     public Locale getLocale() {
         return locale;
     }
 
     public int getNeedCountOfQuestionForSuccess() {
         return needCountOfQuestionForSuccess;
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
     }
 }

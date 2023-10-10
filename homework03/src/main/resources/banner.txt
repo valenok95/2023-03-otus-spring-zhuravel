@@ -1,1 +1,2 @@
 TEST BANNER
+        message","ask.firstname","ask.lastname","welcome","question.asking.size","question.asking.required","question.asking.title","question.asking.answer.options","question.asking.answer.enter","result.named","result.count","result.min","result.success","result.failed"

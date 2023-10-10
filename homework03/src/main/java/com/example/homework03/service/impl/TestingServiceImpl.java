@@ -1,7 +1,6 @@
 package com.example.homework03.service.impl;
 
 import com.example.homework03.configuration.TestServiceProperties;
-import com.example.homework03.dao.MessageDao;
 import com.example.homework03.dao.QuestionDao;
 import com.example.homework03.dao.UserDao;
 import com.example.homework03.domain.Question;
@@ -11,6 +10,7 @@ import com.example.homework03.service.TestingService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,20 +20,22 @@ public class TestingServiceImpl implements TestingService {
 
     private int successCount;
     private final QuestionDao questionDao;
-    private final MessageDao messageDao;
     private final UserDao userDao;
     private final IOService ioService;
     private final MessageSource messageSource;
 
     @Autowired
     public TestingServiceImpl(TestServiceProperties props, QuestionDao questionDao,
-                              MessageDao messageDao, UserDao userDao, IOService ioService, MessageSource messageSource) {
+                              UserDao userDao, IOService ioService) {
         this.props = props;
         this.questionDao = questionDao;
-        this.messageDao = messageDao;
         this.userDao = userDao;
         this.ioService = ioService;
-        this.messageSource = messageSource;
+        var ms = new ResourceBundleMessageSource();
+        ms.setDefaultLocale(props.getLocale());
+        ms.setUseCodeAsDefaultMessage(true);
+        ms.setBasename("i18n/appmessages");
+        this.messageSource = ms;
     }
 
     @Override
@@ -47,27 +49,17 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private void askFullName() {
-        String firstName =
-                ioService.readStringWithPrompt(messageSource.getMessage(messageDao.getMessage().getAskFirstNameParam(), new String[]{},
-                        props.getLocale()));
+        String firstName = ioService.readStringWithPrompt(getMessage("ask.firstname"));
 
-        String lastName =
-                ioService.readStringWithPrompt(messageSource.getMessage(messageDao.getMessage().getAskLastNameParam(), new String[]{},
-                        props.getLocale()));
+        String lastName = ioService.readStringWithPrompt(getMessage("ask.lastname"));
 
         userDao.saveUser(new User(firstName, lastName));
     }
 
     private void greeting(List<Question> questionList) {
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getWelcomeParam(),
-                new String[]{userDao.getFullName()},
-                props.getLocale()));
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getQuestionSizeParam(),
-                new Integer[]{questionList.size()},
-                props.getLocale()));
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getRequiredCountParam(),
-                new Integer[]{props.getNeedCountOfQuestionForSuccess()},
-                props.getLocale()));
+        ioService.printString(getMessage("welcome", userDao.getFullName()));
+        ioService.printString(getMessage("question.asking.size", questionList.size()));
+        ioService.printString(getMessage("question.asking.required", props.getNeedCountOfQuestionForSuccess()));
     }
 
     private void testingQuestions(List<Question> questionList) {
@@ -75,33 +67,20 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private void testingQuestion(Question question) {
-        String questionTitle =
-                messageSource.getMessage(question.getTitleParam(),
-                        new String[]{},
-                        props.getLocale());
+        String questionTitle = getMessage(question.getTitleParam());
 
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getQuestionTitleParam(),
-                new String[]{String.valueOf(question.getId()), questionTitle},
-                props.getLocale()));
-        //  ioService.printString("\nQuestion №" + question.getId() + " - " + question.getTitle());
+        ioService.printString(getMessage("question.asking.title",
+                String.valueOf(question.getId()), questionTitle));
 
+        ioService.printString(getMessage(question.getTextParam(), question.getTask()));
 
-        ioService.printString(messageSource.getMessage(question.getTextParam(),
-                new String[]{question.getTask()},
-                props.getLocale()));
+        ioService.printString(getMessage("question.asking.answer.options"));
 
-        //   ioService.printString(question.getTextParam());
-
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getAnswerOptionsParam(),
-                new String[]{},
-                props.getLocale()));
 
         question.getAnswersValue().forEach(el -> ioService.printString("\t" + el));
 
         String answer =
-                ioService.readStringWithPrompt(messageSource.getMessage(messageDao.getMessage().getAnswerEnterParam(),
-                        new String[]{},
-                        props.getLocale()));
+                ioService.readStringWithPrompt(getMessage("question.asking.answer.enter"));
 
         ioService.printString(String.valueOf(check(answer, question)));
     }
@@ -115,20 +94,17 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private void printResult(List<Question> questionList) {
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getResultNamedParam(),
-                new String[]{userDao.getFullName()},
-                props.getLocale()));
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getResultCountParam(),
-                new Integer[]{successCount, questionList.size()},
-                props.getLocale()));
-        ioService.printString(messageSource.getMessage(messageDao.getMessage().getResultMinParam(),
-                new Integer[]{props.getNeedCountOfQuestionForSuccess()},
-                props.getLocale()));
+        ioService.printString(getMessage("result.named", userDao.getFullName()));
+        ioService.printString(getMessage("result.count", successCount, questionList.size()));
+        ioService.printString(getMessage("result.min", props.getNeedCountOfQuestionForSuccess()));
         ioService.printString(successCount < props.getNeedCountOfQuestionForSuccess() ?
-                messageSource.getMessage(messageDao.getMessage().getResultFailedParam(),
-                        new String[]{},
-                        props.getLocale()) : messageSource.getMessage(messageDao.getMessage().getResultSuccessParam(),
-                new String[]{},
-                props.getLocale()));
+                getMessage("result.failed") :
+                getMessage("result.success"));
     }
+
+    public String getMessage(String code, Object... args) { // Метод для получения сообщения по коду
+        return this.messageSource.getMessage(code, args, props.getLocale());
+    }
+
+
 }

@@ -1,9 +1,6 @@
 package com.example.homework03.service;
 
 import com.example.homework03.configuration.TestServiceProperties;
-import com.example.homework03.dao.ConsoleUserDao;
-import com.example.homework03.dao.MessageDao;
-import com.example.homework03.dao.MessageDaoImpl;
 import com.example.homework03.dao.QuestionDao;
 import com.example.homework03.dao.QuestionDaoImpl;
 import com.example.homework03.dao.UserDao;
@@ -24,16 +21,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @EnableConfigurationProperties
 class TestingServiceTest {
-    @Autowired
-    MessageSource messageSource;
-    @Autowired
-    MessageDao messageDao;
     @Autowired
     UserDao userDao;
     @Autowired
@@ -56,8 +48,8 @@ class TestingServiceTest {
         IOService ioService = new IOServiceStream(printStream, inputStream);
 
         TestingService testingService = new TestingServiceImpl(props, questionDao,
-                messageDao, userDao,
-                ioService, messageSource);
+                userDao,
+                ioService);
         testingService.testing();
 
         String resultOutput = outputStream.toString();

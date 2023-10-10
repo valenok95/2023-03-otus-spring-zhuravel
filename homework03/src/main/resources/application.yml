@@ -1,9 +1,4 @@
 app:
-  message-source: messages.csv
+  resource: question.csv
   need-count-of-question-for-success: '3'
   locale: en
-  
-spring:
-  messages:
-    basename: "i18n/appmessages"
-    encoding: "UTF-8"

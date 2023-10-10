@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class ConsoleUserDao implements UserDao {
-    private static User user = null;
+    private User user = null;
 
     @Override
     public User getUser() {

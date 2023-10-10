@@ -26,7 +26,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     @Override
     public List<Question> getAll() {
-        try (InputStream inputStream = props.getMessageSource().getInputStream()) {
+        try (InputStream inputStream = props.getResource().getInputStream()) {
             return readLinesItems(inputStream).stream()
                     .filter(item -> item.get(0).equals("question"))
                     .map(item -> {
