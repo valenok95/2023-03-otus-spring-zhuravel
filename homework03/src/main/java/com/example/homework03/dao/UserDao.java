@@ -6,7 +6,5 @@ import java.util.List;
 public interface UserDao {
     User getUser();
 
-    String getFullName();
-
     void saveUser(User user);
 }

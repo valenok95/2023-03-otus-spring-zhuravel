@@ -1,10 +1,12 @@
 package com.example.homework03.service;
 
+import com.example.homework03.configuration.ResourceProvider;
 import com.example.homework03.configuration.TestServiceProperties;
 import com.example.homework03.dao.QuestionDao;
 import com.example.homework03.dao.QuestionDaoImpl;
 import com.example.homework03.dao.UserDao;
 import com.example.homework03.service.impl.IOServiceStream;
+import com.example.homework03.service.impl.LocalizeServiceImpl;
 import com.example.homework03.service.impl.TestingServiceImpl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,7 +20,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -30,6 +31,10 @@ class TestingServiceTest {
     UserDao userDao;
     @Autowired
     TestServiceProperties props;
+    @Autowired
+    LocalizeServiceImpl localizeService;
+    @Autowired
+    ResourceProvider resourceProvider;
 
     @Test
     void testingTest() throws IOException {
@@ -40,7 +45,7 @@ class TestingServiceTest {
         );
         Mockito.when(resource.getInputStream()).thenReturn(inputStreamIn);
 
-        QuestionDao questionDao = new QuestionDaoImpl(props);
+        QuestionDao questionDao = new QuestionDaoImpl(resourceProvider);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
@@ -49,7 +54,7 @@ class TestingServiceTest {
 
         TestingService testingService = new TestingServiceImpl(props, questionDao,
                 userDao,
-                ioService);
+                ioService, localizeService);
         testingService.testing();
 
         String resultOutput = outputStream.toString();

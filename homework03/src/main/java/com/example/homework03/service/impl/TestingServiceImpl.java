@@ -9,33 +9,26 @@ import com.example.homework03.service.IOService;
 import com.example.homework03.service.TestingService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TestingServiceImpl implements TestingService {
 
     private final TestServiceProperties props;
-
     private int successCount;
     private final QuestionDao questionDao;
     private final UserDao userDao;
     private final IOService ioService;
-    private final MessageSource messageSource;
+    private final LocalizeServiceImpl localizeService;
 
     @Autowired
     public TestingServiceImpl(TestServiceProperties props, QuestionDao questionDao,
-                              UserDao userDao, IOService ioService) {
+                              UserDao userDao, IOService ioService, LocalizeServiceImpl localizeService) {
         this.props = props;
         this.questionDao = questionDao;
         this.userDao = userDao;
         this.ioService = ioService;
-        var ms = new ResourceBundleMessageSource();
-        ms.setDefaultLocale(props.getLocale());
-        ms.setUseCodeAsDefaultMessage(true);
-        ms.setBasename("i18n/appmessages");
-        this.messageSource = ms;
+        this.localizeService = localizeService;
     }
 
     @Override
@@ -49,17 +42,17 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private void askFullName() {
-        String firstName = ioService.readStringWithPrompt(getMessage("ask.firstname"));
+        String firstName = ioService.readStringWithPrompt(localizeService.getMessage("ask.firstname"));
 
-        String lastName = ioService.readStringWithPrompt(getMessage("ask.lastname"));
+        String lastName = ioService.readStringWithPrompt(localizeService.getMessage("ask.lastname"));
 
         userDao.saveUser(new User(firstName, lastName));
     }
 
     private void greeting(List<Question> questionList) {
-        ioService.printString(getMessage("welcome", userDao.getFullName()));
-        ioService.printString(getMessage("question.asking.size", questionList.size()));
-        ioService.printString(getMessage("question.asking.required", props.getNeedCountOfQuestionForSuccess()));
+        ioService.printString(localizeService.getMessage("welcome", userDao.getUser().getFullName()));
+        ioService.printString(localizeService.getMessage("question.asking.size", questionList.size()));
+        ioService.printString(localizeService.getMessage("question.asking.required", props.getNeedCountOfQuestionForSuccess()));
     }
 
     private void testingQuestions(List<Question> questionList) {
@@ -67,20 +60,20 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private void testingQuestion(Question question) {
-        String questionTitle = getMessage(question.getTitleParam());
+        String questionTitle = localizeService.getMessage(question.getTitleParam());
 
-        ioService.printString(getMessage("question.asking.title",
+        ioService.printString(localizeService.getMessage("question.asking.title",
                 String.valueOf(question.getId()), questionTitle));
 
-        ioService.printString(getMessage(question.getTextParam(), question.getTask()));
+        ioService.printString(localizeService.getMessage(question.getTextParam(), question.getTask()));
 
-        ioService.printString(getMessage("question.asking.answer.options"));
+        ioService.printString(localizeService.getMessage("question.asking.answer.options"));
 
 
         question.getAnswersValue().forEach(el -> ioService.printString("\t" + el));
 
         String answer =
-                ioService.readStringWithPrompt(getMessage("question.asking.answer.enter"));
+                ioService.readStringWithPrompt(localizeService.getMessage("question.asking.answer.enter"));
 
         ioService.printString(String.valueOf(check(answer, question)));
     }
@@ -94,17 +87,15 @@ public class TestingServiceImpl implements TestingService {
     }
 
     private void printResult(List<Question> questionList) {
-        ioService.printString(getMessage("result.named", userDao.getFullName()));
-        ioService.printString(getMessage("result.count", successCount, questionList.size()));
-        ioService.printString(getMessage("result.min", props.getNeedCountOfQuestionForSuccess()));
+        ioService.printString(localizeService.getMessage("result.named", userDao.getUser().getFullName()));
+        ioService.printString(localizeService.getMessage("result.count", successCount, questionList.size()));
+        ioService.printString(localizeService.getMessage("result.min", props.getNeedCountOfQuestionForSuccess()));
         ioService.printString(successCount < props.getNeedCountOfQuestionForSuccess() ?
-                getMessage("result.failed") :
-                getMessage("result.success"));
+                localizeService.getMessage("result.failed") :
+                localizeService.getMessage("result.success"));
     }
 
-    public String getMessage(String code, Object... args) { // Метод для получения сообщения по коду
-        return this.messageSource.getMessage(code, args, props.getLocale());
-    }
+ 
 
 
 }

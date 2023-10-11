@@ -1,5 +1,6 @@
 package com.example.homework03.dao;
 
+import com.example.homework03.configuration.ResourceProvider;
 import com.example.homework03.configuration.TestServiceProperties;
 import com.example.homework03.domain.Answer;
 import com.example.homework03.domain.Question;
@@ -17,16 +18,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class QuestionDaoImpl implements QuestionDao {
-    private final TestServiceProperties props;
+    private final ResourceProvider resourceProvider;
 
 
-    public QuestionDaoImpl(TestServiceProperties props) {
-        this.props = props;
+    public QuestionDaoImpl(ResourceProvider resourceProvider) {
+        this.resourceProvider = resourceProvider;
     }
 
     @Override
     public List<Question> getAll() {
-        try (InputStream inputStream = props.getResource().getInputStream()) {
+        try (InputStream inputStream = resourceProvider.getResource().getInputStream()) {
             return readLinesItems(inputStream).stream()
                     .filter(item -> item.get(0).equals("question"))
                     .map(item -> {

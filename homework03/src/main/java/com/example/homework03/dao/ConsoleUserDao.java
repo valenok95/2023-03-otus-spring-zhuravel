@@ -13,11 +13,6 @@ public class ConsoleUserDao implements UserDao {
     }
     
     @Override
-    public String getFullName() {
-        return user.getFirstName() + " " + user.getLastName();
-    }
-
-    @Override
     public void saveUser(User user) {
         this.user = user;
     }

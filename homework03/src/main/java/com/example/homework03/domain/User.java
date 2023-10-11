@@ -10,4 +10,10 @@ import lombok.Getter;
 public class User {
     private final String firstName;
     private final String lastName;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    ;
 }

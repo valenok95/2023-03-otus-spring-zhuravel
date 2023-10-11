@@ -1,7 +1,7 @@
 package com.example.homework03.dao;
 
+import com.example.homework03.configuration.ResourceProvider;
 import com.example.homework03.configuration.TestServiceProperties;
-import com.example.homework03.exception.MissingQuestionsException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -19,10 +18,10 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @EnableConfigurationProperties
 public class QuestionDaoImplTest {
-    TestServiceProperties props;
+    ResourceProvider resourceProvider;
 
-    public QuestionDaoImplTest(@Autowired TestServiceProperties props) {
-        this.props = props;
+    public QuestionDaoImplTest(@Autowired ResourceProvider resourceProvider) {
+        this.resourceProvider = resourceProvider;
     }
 
     @Test
@@ -34,7 +33,7 @@ public class QuestionDaoImplTest {
         );
         Mockito.when(resource.getInputStream()).thenReturn(inputStreamIn);
 
-        QuestionDao questionDao = new QuestionDaoImpl(props);
+        QuestionDao questionDao = new QuestionDaoImpl(resourceProvider);
         var result = questionDao.getAll();
         Assertions.assertEquals(1, result.size());
     }
