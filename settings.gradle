@@ -1,4 +1,5 @@
 rootProject.name = '2023-03-otus-spring-zhuravel'
-include 'homework02'
-include 'homework05'
+include 'homework03'
+
+
 
