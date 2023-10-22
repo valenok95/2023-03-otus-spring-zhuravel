@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@DisplayName("Тест JPA для работы с книгами")
 public class BookRepositoryJpaTest {
 
     private static final Long EXISTING_BOOK_ID = 1L;

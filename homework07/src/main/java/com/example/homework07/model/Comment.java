@@ -7,7 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,10 +21,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "COMMENTS")
+@NamedEntityGraph(name = "comment-entity-graph", attributeNodes = {@NamedAttributeNode(value =
+        "book", subgraph = "book-subgraph")},
+        subgraphs = {
+                @NamedSubgraph(name = "book-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("author"),
+                                @NamedAttributeNode("genre")}
+                )
+        }
+)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comments_generator")
-    @SequenceGenerator(name = "comments_generator",sequenceName = "COMMENTS_SEQ",  allocationSize = 1)
+    @SequenceGenerator(name = "comments_generator", sequenceName = "COMMENTS_SEQ", allocationSize = 1)
     @Column(name = "COMMENT_ID")
     private long id;
 
