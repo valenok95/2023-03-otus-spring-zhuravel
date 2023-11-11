@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongoadmin:secret@localhost:27888/test?authSource=admin
+
+mongock:
+  change-logs-scan-package: mongock.changelog
+  runner-type: "InitializingBean"
