@@ -26,15 +26,15 @@ dependencies {
     annotationProcessor 'com.github.cloudyrock.mongock:mongock-spring-v5:4.3.8'
     implementation 'com.github.cloudyrock.mongock:mongodb-springdata-v3-driver:4.3.8'
     annotationProcessor 'com.github.cloudyrock.mongock:mongodb-springdata-v3-driver:4.3.8'
-   // testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.process'
+    // testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.process'
 
 
-    //testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-parent:3.0.4'
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3'
-    //testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.process:4.6.2'
-    //testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.6.1'
+    testImplementation 'org.testcontainers:testcontainers:1.19.1'
+    testImplementation 'org.testcontainers:mongodb'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
 }
 
 tasks.named('test') {
